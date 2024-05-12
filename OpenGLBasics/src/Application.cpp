@@ -32,7 +32,7 @@ int main(void)
         return -1;
     
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(1280, 720, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(1080, 1080, "OpenGLBasics", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -54,8 +54,8 @@ int main(void)
         float positions[] = {
             -0.5f, -0.5f,
              0.5f, -0.5f,
-             0.5f,  0.5f,
-            -0.5f,  0.5f
+             0.5f,  0.8f,
+            -0.5f,  0.8f
         };
         unsigned int indices[] = {
             0, 1, 2,
@@ -68,23 +68,20 @@ int main(void)
 
         VertexBufferLayout layout;
         layout.Push<float>(2);
+
         va.AddBuffer(vb, layout);
 
         IndexBuffer ib(indices, sizeof(indices));
 
-        Shader shader("res/shaders/Basic.shader");
-        shader.Bind();
-        shader.SetUniform4f("u_Color", 0.8f, 0.9f, 0.1f, 1.0f);
-
-        va.Unbind();
-        vb.Unbind();
-        ib.Unbind();
-        shader.Unbind();
-
+        Shader shader("res/shaders/3d.shader");
+       
         Renderer renderer;
 
+        // Given to shader
         glm::vec4 color(0.45f, 0.55f, 0.60f, 1.00f);
-        float slider = 0.3f;
+        glm::mat4 transform(1.0);
+
+        //transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
         //////////////////////////////////////////////////////////////////////
 
         IMGUI_CHECKVERSION();
@@ -95,11 +92,10 @@ int main(void)
         ImGui_ImplOpenGL3_Init("#version 410");
         ImGui::StyleColorsDark();
         
-
-        /* Loop until the user closes the window */
+        static float s_RotationSpeed;
+       // Main loop
         while (!glfwWindowShouldClose(window))
         {
-            /* Render here */
             renderer.Clear();
             shader.Bind();
             
@@ -108,23 +104,27 @@ int main(void)
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
             {
-                static int counter = 0;
+                
                 ImGui::Begin("Test");                       
-                ImGui::Text("This is some useful text.");
+                ImGui::Text(" ");
                 ImGui::ColorEdit3("obj color", (float*)&color);
-                if (ImGui::Button("Button")) {
+                ImGui::SliderFloat("Rotation Speed", &s_RotationSpeed, 0.0f, 0.15f);
+                if (ImGui::Button("Rotate 90 degrees")) {
                    
-                    counter++;
+                    transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
                 }
-                ImGui::SameLine();
-                ImGui::Text("counter = %d", counter);
+             
+                //ImGui::Text("counter = %d", counter);
                 ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+
+            
                 ImGui::End();
             }
-
-        
-
+           
+            transform = glm::rotate(transform, s_RotationSpeed, glm::vec3(0.0f, 0.0f, 1.0f));
+            shader.UploadUniformMat4("transform", transform);
             shader.SetUniform4f("u_Color", color[0], color[1], color[2], 1.0f);
+            
             renderer.Draw(va, ib, shader);
 
             ImGui::Render();
