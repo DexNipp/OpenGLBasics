@@ -2,17 +2,18 @@
 #include "GLFW/glfw3.h"
 
 #include <iostream>
-#include <fstream>
-#include <string>
-#include <sstream>
+//#include <fstream>
+//#include <string>
+//#include <sstream>
 
 #include "Core/Renderer.h"
-
 #include "Core/VertexBuffer.h"
 #include "Core/VertexBufferLayout.h"
 #include "Core/IndexBuffer.h"
 #include "Core/VertexArray.h"
 #include "Core/Shader.h"
+#include "Core/Timestep.h"
+#include "Camera.h"
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -106,13 +107,18 @@ int main(void)
         glm::vec4 color(0.45f, 0.55f, 0.60f, 1.00f);
         
         glm::mat4 model(1.0f);
-        model = glm::rotate(model, glm::radians(-80.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        //model = glm::rotate(model, glm::radians(-80.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
         glm::mat4 view(1.0f);
-        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -5.0f));
+        //view = glm::translate(view, glm::vec3(0.0f, 0.0f, -5.0f));
 
         glm::mat4 projection;
-        projection = glm::perspective(glm::radians(65.0f), 1080.0f / 1080.0f, 0.1f, 100.0f);
+        projection = glm::perspective(glm::radians(85.0f), 1080.0f / 1080.0f, 0.1f, 100.0f);
+
+        Camera camera(glm::radians(85.0f), 1080.0f / 1080.0f, 0.1f, 100.0f);
+
+
+        
 
         //////////////////////////////////////////////////////////////////////
 
@@ -128,9 +134,19 @@ int main(void)
 
         glEnable(GL_DEPTH_TEST);
 
+        GLenum mode = GL_FILL;
+
+        float LastFrameTime = 0.0;
+
        // Main loop
         while (!glfwWindowShouldClose(window))
         {
+            float time = (float)glfwGetTime();
+            Timestep timestep = time - LastFrameTime;
+            LastFrameTime = time;
+
+
+
             renderer.Clear();
             shader.Bind();
             
@@ -148,13 +164,22 @@ int main(void)
                    
                     model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
                 }
-             
-                //ImGui::Text("counter = %d", counter);
+                if (ImGui::Button("Toggle WireFrame")) {
+
+                    mode = (mode == GL_FILL) ? GL_LINE : GL_FILL;
+                    glPolygonMode(GL_FRONT_AND_BACK, mode);
+
+                }
                 ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
 
             
                 ImGui::End();
             }
+
+            const float radius = 10.0f;
+            float camX = sin(glfwGetTime()) * radius;
+            float camZ = cos(glfwGetTime()) * radius;
+            view = glm::lookAt(glm::vec3(camX, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
            
             model = glm::rotate(model, s_RotationSpeed * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
             shader.SetUniformMat4("model", model);

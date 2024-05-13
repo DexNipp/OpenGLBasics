@@ -113,6 +113,7 @@
   <ItemGroup>
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\Core\Shader.h" />
+    <ClInclude Include="src\Core\Timestep.h" />
     <ClInclude Include="src\Core\VertexBufferLayout.h" />
     <ClInclude Include="src\Core\IndexBuffer.h" />
     <ClInclude Include="src\Core\Renderer.h" />
