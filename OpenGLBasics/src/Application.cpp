@@ -6,13 +6,13 @@
 #include <string>
 #include <sstream>
 
-#include "Renderer.h"
+#include "Core/Renderer.h"
 
-#include "VertexBuffer.h"
-#include "VertexBufferLayout.h"
-#include "IndexBuffer.h"
-#include "VertexArray.h"
-#include "Shader.h"
+#include "Core/VertexBuffer.h"
+#include "Core/VertexBufferLayout.h"
+#include "Core/IndexBuffer.h"
+#include "Core/VertexArray.h"
+#include "Core/Shader.h"
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -62,26 +62,58 @@ int main(void)
             2, 3, 0
         };
 
+        float cubeVertices[] = {
+            -1.0, -1.0,  1.0,
+             1.0, -1.0,  1.0,
+            -1.0,  1.0,  1.0,
+             1.0,  1.0,  1.0,
+            -1.0, -1.0, -1.0,
+             1.0, -1.0, -1.0,
+            -1.0,  1.0, -1.0,
+             1.0,  1.0, -1.0,
+        };
+
+        unsigned int cubeIndices[] = {
+           0, 2, 3, 0, 3, 1,
+           2, 6, 7, 2, 7, 3,
+           6, 4, 5, 6, 5, 7,
+           4, 0, 1, 4, 1, 5,
+           0, 4, 6, 0, 6, 2,
+           1, 5, 7, 1, 7, 3,
+        };
 
         VertexArray va;
-        VertexBuffer vb(positions, 2 * 4 * sizeof(float));
+        VertexBuffer vb(cubeVertices, 3 * 8 * sizeof(float));
 
         VertexBufferLayout layout;
-        layout.Push<float>(2);
+        layout.Push<float>(3);
 
         va.AddBuffer(vb, layout);
 
-        IndexBuffer ib(indices, sizeof(indices));
+        IndexBuffer ib(cubeIndices, sizeof(cubeIndices));
 
         Shader shader("res/shaders/3d.shader");
        
         Renderer renderer;
 
+        vb.Unbind();
+        ib.Unbind();
+        va.Unbind();
+        shader.Unbind();
+        
+
         // Given to shader
         glm::vec4 color(0.45f, 0.55f, 0.60f, 1.00f);
-        glm::mat4 transform(1.0);
+        
+        glm::mat4 model(1.0f);
+        model = glm::rotate(model, glm::radians(-80.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
-        //transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        glm::mat4 view(1.0f);
+        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -5.0f));
+
+        glm::mat4 projection;
+        projection = glm::perspective(glm::radians(65.0f), 1080.0f / 1080.0f, 0.1f, 100.0f);
+
         //////////////////////////////////////////////////////////////////////
 
         IMGUI_CHECKVERSION();
@@ -93,6 +125,9 @@ int main(void)
         ImGui::StyleColorsDark();
         
         static float s_RotationSpeed;
+
+        glEnable(GL_DEPTH_TEST);
+
        // Main loop
         while (!glfwWindowShouldClose(window))
         {
@@ -109,9 +144,9 @@ int main(void)
                 ImGui::Text(" ");
                 ImGui::ColorEdit3("obj color", (float*)&color);
                 ImGui::SliderFloat("Rotation Speed", &s_RotationSpeed, 0.0f, 0.15f);
-                if (ImGui::Button("Rotate 90 degrees")) {
+                if (ImGui::Button("Change Rotation Axis")) {
                    
-                    transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+                    model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
                 }
              
                 //ImGui::Text("counter = %d", counter);
@@ -121,8 +156,10 @@ int main(void)
                 ImGui::End();
             }
            
-            transform = glm::rotate(transform, s_RotationSpeed, glm::vec3(0.0f, 0.0f, 1.0f));
-            shader.UploadUniformMat4("transform", transform);
+            model = glm::rotate(model, s_RotationSpeed * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
+            shader.SetUniformMat4("model", model);
+            shader.SetUniformMat4("view", view);
+            shader.SetUniformMat4("projection", projection);
             shader.SetUniform4f("u_Color", color[0], color[1], color[2], 1.0f);
             
             renderer.Draw(va, ib, shader);

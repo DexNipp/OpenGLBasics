@@ -1,5 +1,12 @@
 #pragma once
-class Camera
-{
+
+#include "glm/glm.hpp"
+
+class Camera {
+public:
+
+private:
+	glm::vec3 m_Position;
+
 };
 

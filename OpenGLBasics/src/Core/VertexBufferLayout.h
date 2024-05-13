@@ -22,6 +22,7 @@ struct VertexBufferAttribute {
 	}
 };
 
+// defines the vertex buffer attributes
 class VertexBufferLayout
 {
 private:
