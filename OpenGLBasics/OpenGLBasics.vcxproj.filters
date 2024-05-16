@@ -57,13 +57,11 @@
     <ClCompile Include="vendor\imgui\imgui_widgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\Basic.shader" />
-    <None Include="res\shaders\3d.shader" />
+    <None Include="res\shaders\phong.shader" />
+    <None Include="res\shaders\light.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Core\Renderer.h">
@@ -127,6 +125,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Timestep.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CameraController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

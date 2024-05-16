@@ -1,11 +1,3 @@
-#include <GL/glew.h>
-#include "GLFW/glfw3.h"
-
-#include <iostream>
-//#include <fstream>
-//#include <string>
-//#include <sstream>
-
 #include "Core/Renderer.h"
 #include "Core/VertexBuffer.h"
 #include "Core/VertexBufferLayout.h"
@@ -14,6 +6,10 @@
 #include "Core/Shader.h"
 #include "Core/Timestep.h"
 #include "Camera.h"
+#include "CameraController.h"
+
+#include "GLFW/glfw3.h"
+#include <GL/glew.h>
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -23,6 +19,16 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
+#include <iostream>
+
+void mouseCallback(GLFWwindow* window, double xpos, double ypos);
+void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+
+const float WIDTH = 1920.0f;
+const float HEIGHT = 1080.0f;
+
+Camera camera(glm::radians(100.0f), WIDTH / HEIGHT, 0.1f, 1000.0f);
+CameraController cameraController(camera);
 
 int main(void)
 {
@@ -33,12 +39,16 @@ int main(void)
         return -1;
     
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(1080, 1080, "OpenGLBasics", NULL, NULL);
+    window = glfwCreateWindow(WIDTH, HEIGHT, "OpenGLBasics", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
         return -1;
     }
+
+    glfwSetCursorPosCallback(window, mouseCallback);
+    glfwSetScrollCallback(window, scrollCallback);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
@@ -52,75 +62,148 @@ int main(void)
 
     //////////////////////////////////////////////////////////////////////
     {
-        float positions[] = {
-            -0.5f, -0.5f,
-             0.5f, -0.5f,
-             0.5f,  0.8f,
-            -0.5f,  0.8f
+        float vertices[] = {
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+
+         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
         };
-        unsigned int indices[] = {
-            0, 1, 2,
-            2, 3, 0
-        };
+
 
         float cubeVertices[] = {
-            -1.0, -1.0,  1.0,
-             1.0, -1.0,  1.0,
-            -1.0,  1.0,  1.0,
-             1.0,  1.0,  1.0,
-            -1.0, -1.0, -1.0,
-             1.0, -1.0, -1.0,
-            -1.0,  1.0, -1.0,
-             1.0,  1.0, -1.0,
+            // Front Face
+            -0.5,  0.5, -0.5,  0.0, 0.0, 1.0,
+            -0.5, -0.5, -0.5,  0.0, 0.0, 1.0,
+             0.5, -0.5, -0.5,  0.0, 0.0, 1.0,
+             0.5,  0.5, -0.5,  0.0, 0.0, 1.0,
+
+             // Back Face
+            -0.5,  0.5,  0.5,  0.0, 0.0, -1.0,
+            -0.5, -0.5,  0.5,  0.0, 0.0, -1.0,
+             0.5, -0.5,  0.5,  0.0, 0.0, -1.0,
+             0.5,  0.5,  0.5,  0.0, 0.0, -1.0,
+             
+             // Top Face
+            -0.5,  0.5,  0.5,  0.0, 1.0, 0.0,
+            -0.5,  0.5, -0.5,  0.0, 1.0, 0.0,
+             0.5,  0.5, -0.5,  0.0, 1.0, 0.0,
+             0.5,  0.5,  0.5,  0.0, 1.0, 0.0,
+
+             // Bottom Face
+            -0.5, -0.5,  0.5,  0.0, -1.0, 0.0,
+            -0.5, -0.5, -0.5,  0.0, -1.0, 0.0,
+             0.5, -0.5, -0.5,  0.0, -1.0, 0.0,
+             0.5, -0.5,  0.5,  0.0, -1.0, 0.0,
+
+             // Left Face
+            -0.5,  0.5,  0.5,  -1.0, 0.0, 0.0,
+            -0.5, -0.5,  0.5,  -1.0, 0.0, 0.0,
+            -0.5, -0.5, -0.5,  -1.0, 0.0, 0.0,
+            -0.5,  0.5, -0.5,  -1.0, 0.0, 0.0,
+
+            // Right Face
+            0.5,  0.5,  0.5,  1.0, 0.0, 0.0,
+            0.5, -0.5,  0.5,  1.0, 0.0, 0.0,
+            0.5, -0.5, -0.5,  1.0, 0.0, 0.0,
+            0.5,  0.5, -0.5,  1.0, 0.0, 0.0
         };
+
+        
 
         unsigned int cubeIndices[] = {
-           0, 2, 3, 0, 3, 1,
-           2, 6, 7, 2, 7, 3,
-           6, 4, 5, 6, 5, 7,
-           4, 0, 1, 4, 1, 5,
-           0, 4, 6, 0, 6, 2,
-           1, 5, 7, 1, 7, 3,
+           // Front Face
+           0, 1, 2,
+           2, 3, 0,
+
+           // Back Face
+           4, 5, 6,
+           6, 7, 4,
+
+           // Top Face
+           8, 9, 10,
+           10, 11, 8,
+
+           // Bottom Face
+           12, 13, 14,
+           14, 15, 12,
+
+           // Left Face
+           16, 17, 18,
+           18, 19, 16,
+
+           // Right Face
+           20, 21, 22,
+           22, 23, 20
         };
 
-        VertexArray va;
-        VertexBuffer vb(cubeVertices, 3 * 8 * sizeof(float));
-
+        VertexArray vaCube;
+        VertexBuffer vb(vertices, 6 * 36 * sizeof(float));
         VertexBufferLayout layout;
         layout.Push<float>(3);
+        layout.Push<float>(3); // Normal attribute 
+        vaCube.AddBuffer(vb, layout);
+        IndexBuffer ib(cubeIndices, 36 * sizeof(unsigned int));
+        Shader CubeShader("res/shaders/phong.shader");
 
-        va.AddBuffer(vb, layout);
-
-        IndexBuffer ib(cubeIndices, sizeof(cubeIndices));
-
-        Shader shader("res/shaders/3d.shader");
-       
+        VertexArray vaLightCube;
+        VertexBuffer vbLight(cubeVertices, 3 * 24 * sizeof(float));
+        VertexBufferLayout layoutLight;
+        layoutLight.Push<float>(3);
+        layoutLight.Push<float>(3);
+        vaLightCube.AddBuffer(vbLight, layoutLight);
+        Shader LightShader("res/shaders/light.shader");
+        
         Renderer renderer;
+
+
+        // Given to shader
+        glm::vec4 color(1.0f, 0.55f, 0.60f, 1.00f);
+        
+        glm::vec3 lightPos(0.5f, 1.0f, 2.0f);
+   
+        //////////////////////////////////////////////////////////////////////
 
         vb.Unbind();
         ib.Unbind();
-        va.Unbind();
-        shader.Unbind();
-        
-
-        // Given to shader
-        glm::vec4 color(0.45f, 0.55f, 0.60f, 1.00f);
-        
-        glm::mat4 model(1.0f);
-        //model = glm::rotate(model, glm::radians(-80.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-
-        glm::mat4 view(1.0f);
-        //view = glm::translate(view, glm::vec3(0.0f, 0.0f, -5.0f));
-
-        glm::mat4 projection;
-        projection = glm::perspective(glm::radians(85.0f), 1080.0f / 1080.0f, 0.1f, 100.0f);
-
-        Camera camera(glm::radians(85.0f), 1080.0f / 1080.0f, 0.1f, 100.0f);
-
-
-        
-
-        //////////////////////////////////////////////////////////////////////
+        vaCube.Unbind();
+        CubeShader.Unbind();
 
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
@@ -129,40 +212,75 @@ int main(void)
         ImGui_ImplGlfw_InitForOpenGL(window, true);
         ImGui_ImplOpenGL3_Init("#version 410");
         ImGui::StyleColorsDark();
-        
-        static float s_RotationSpeed;
 
         glEnable(GL_DEPTH_TEST);
+        //glDepthFunc(GL_LEQUAL);
+        //glEnable(GL_CULL_FACE);
+        //glCullFace(GL_BACK);
+        //glFrontFace(GL_CCW);
+        
+        
 
         GLenum mode = GL_FILL;
-
         float LastFrameTime = 0.0;
+        glm::mat4 model(1.0f);
+        camera.Position = glm::vec3(0.0f, 0.0f, 20.0f);
 
-       // Main loop
         while (!glfwWindowShouldClose(window))
         {
+            
             float time = (float)glfwGetTime();
             Timestep timestep = time - LastFrameTime;
             LastFrameTime = time;
 
-
-
             renderer.Clear();
-            shader.Bind();
             
+            cameraController.ProcessKeyboardInput(window, timestep.GetSeconds());
+
+            glm::mat4 view = camera.getViewMatrix();
+            glm::mat4 projection = glm::perspective(glm::radians(camera.Fov), camera.AspectRatio, 0.1f, 1000.0f);
+            
+            model = glm::rotate(model, timestep.GetSeconds(), glm::vec3(0.0f, 1.0f, 0.0f));
+            
+            
+            CubeShader.Bind();
+            CubeShader.SetUniformMat4("model", model);
+            CubeShader.SetUniformMat4("projection", projection);
+            CubeShader.SetUniformMat4("view", view);
+            CubeShader.SetUniform3f("objectColor", color[0], color[1], color[2]);
+            CubeShader.SetUniform3f("lightColor", 1.0f, 1.0f, 1.0f);
+            CubeShader.SetUniform3f("lightPos", lightPos[0], lightPos[1], lightPos[2]);
+            CubeShader.SetUniform3f("viewPos", camera.Position[0], camera.Position[1], camera.Position[2]);
+
+            //renderer.DrawElements(vaCube, ib, CubeShader);
+            renderer.DrawArrays(vaCube, CubeShader);
+
+           LightShader.Bind();
+           LightShader.SetUniformMat4("projection", projection);
+           LightShader.SetUniformMat4("view", view);
+           
+           glm::mat4 lightmodel = glm::mat4(1.0f);
+           lightmodel = glm::translate(lightmodel, lightPos);
+           lightmodel = glm::scale(lightmodel, glm::vec3(0.2f));
+           LightShader.SetUniformMat4("model", lightmodel);
+           
+           renderer.DrawElements(vaLightCube, ib, LightShader);
+
+            //std::cout << "Position: " << camera.Position[0] << camera.Position[1] << camera.Position[2] << std::endl;
+            //std::cout << "Front: " << camera.Front[0] << camera.Front[1] << camera.Front[2] << std::endl;
+            //std::cout << "Up: " << camera.Up[0] << camera.Up[1] << camera.Up[2] << std::endl;   
 
             ImGui_ImplOpenGL3_NewFrame();
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
             {
-                
-                ImGui::Begin("Test");                       
+
+                ImGui::Begin("Test");
                 ImGui::Text(" ");
                 ImGui::ColorEdit3("obj color", (float*)&color);
-                ImGui::SliderFloat("Rotation Speed", &s_RotationSpeed, 0.0f, 0.15f);
+                //ImGui::SliderFloat("Rotation Speed", &s_RotationSpeed, 0.0f, 0.15f);
                 if (ImGui::Button("Change Rotation Axis")) {
-                   
-                    model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
                 }
                 if (ImGui::Button("Toggle WireFrame")) {
 
@@ -170,32 +288,20 @@ int main(void)
                     glPolygonMode(GL_FRONT_AND_BACK, mode);
 
                 }
+
                 ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
 
-            
                 ImGui::End();
             }
 
-            const float radius = 10.0f;
-            float camX = sin(glfwGetTime()) * radius;
-            float camZ = cos(glfwGetTime()) * radius;
-            view = glm::lookAt(glm::vec3(camX, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
-           
-            model = glm::rotate(model, s_RotationSpeed * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
-            shader.SetUniformMat4("model", model);
-            shader.SetUniformMat4("view", view);
-            shader.SetUniformMat4("projection", projection);
-            shader.SetUniform4f("u_Color", color[0], color[1], color[2], 1.0f);
-            
-            renderer.Draw(va, ib, shader);
+            if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS)
+                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+
 
             ImGui::Render();
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-            /* Swap front and back buffers */
             glfwSwapBuffers(window);
-
-            /* Poll for and process events */
             glfwPollEvents();
         }
     }
@@ -203,7 +309,14 @@ int main(void)
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
-
     glfwTerminate();
     return 0;
+}
+
+void mouseCallback(GLFWwindow* window, double xpos, double ypos) {
+    cameraController.ProcessMouseMovement(xpos, ypos);
+}
+
+void scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
+    cameraController.ProcessMouseScroll(yoffset);
 }

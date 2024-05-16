@@ -1,40 +1,71 @@
 #pragma once
 
 #include "glm/glm.hpp"
+#include <glm/gtc/quaternion.hpp>
 #include "glm/gtc/matrix_transform.hpp"
+
+struct Axis {
+    static constexpr glm::vec3 PositiveX{  1,  0,  0 };
+    static constexpr glm::vec3 NegativeX{ -1,  0,  0 };
+    static constexpr glm::vec3 PositiveY{  0,  1,  0 };
+    static constexpr glm::vec3 NegativeY{  0, -1,  0 };
+    static constexpr glm::vec3 PositiveZ{  0,  0,  1 };
+    static constexpr glm::vec3 NegativeZ{  0,  0, -1 };
+};
+
+// Default camera values
+const float YAW = -90.0f;
+const float PITCH = 0.0f;
+
+// TODO: Make Camera able to maintain itself in main loop. Add setters and getters for private vars and OnUpdate 
 
 class Camera {
 public:
-	Camera() = default;
-	Camera(float fov, float aspectRatio, float near, float far);
+ 
+    float Fov;
+    float AspectRatio;
+    float zFar;
+    float zNear;
 
-	virtual ~Camera() = default;
+    glm::vec3 Position;
+    glm::vec3 Front;
+    glm::vec3 Right;
+    glm::vec3 Up;
+    glm::vec3 WorldUp;
 
-	const glm::mat4 GetProjection() const { return m_Projection; }
-	const glm::mat4 GetView() const { return m_View; }
-	void TranslateView(glm::vec3 trans);
-	void ViewLookAt(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3);
-	glm::mat4 GetViewProjection() const { return m_Projection * m_View; }
+    // euler Angles
+    float Yaw;
+    float Pitch;
 
-	void SetPosition(const glm::vec3 position);
-	glm::vec3 GetPosition() const { return m_Position; }
+    Camera(float fov, float aspectRatio, float zFar, float zNear)
+        : Fov(fov), AspectRatio(aspectRatio), zFar(zFar), zNear(zNear), Position(0.0f),
+          Yaw(YAW), Pitch(PITCH), Front(Axis::NegativeZ), WorldUp(Axis::PositiveY)
+    {
+       
+        UpdateCameraVectors();
+    }
 
-	
-	void SetFOV(const float fov);
-	void SetAspectRatio(const float aspectRation);
-	void SetNear(const float near);
-	void SetFar(const float far);
+    glm::mat4 getProjectionMatrix() const {
+        return glm::perspective(glm::radians(Fov), AspectRatio, zNear, zFar);
+    }
 
-private:
-	void RecalculateProjection();
+    glm::mat4 getViewMatrix() const {
+        return glm::lookAt(Position, Position + Front, Up);
+    }
 
-private:
-	float m_FOV, m_AspectRatio, m_Near, m_Far;
-	
-	glm::mat4 m_Projection = glm::mat4(1.0f);
-	glm::mat4 m_View = glm::mat4(1.0f);
+    glm::mat4 getProjectionViewMatrix() const {
+        return getProjectionMatrix() * getViewMatrix();
+    }
 
-	glm::vec3 m_Position = { 0.0f, 0.0f, 0.0f };
-
-	float m_Pitch = 0.0f, m_Yaw = 0.0f;
+    void UpdateCameraVectors()
+    {
+        glm::vec3 front;
+        front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
+        front.y = sin(glm::radians(Pitch));
+        front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
+        Front = glm::normalize(front);
+        // re-calculate the Right and Up vector
+        Right = glm::normalize(glm::cross(Front, WorldUp));  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
+        Up = glm::normalize(glm::cross(Right, Front));
+    }
 };
