@@ -24,6 +24,7 @@
 void mouseCallback(GLFWwindow* window, double xpos, double ypos);
 void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 
+
 const float WIDTH = 1920.0f;
 const float HEIGHT = 1080.0f;
 
@@ -179,11 +180,11 @@ int main(void)
         layout.Push<float>(3);
         layout.Push<float>(3); // Normal attribute 
         vaCube.AddBuffer(vb, layout);
-        IndexBuffer ib(cubeIndices, 36 * sizeof(unsigned int));
+        //IndexBuffer ib(cubeIndices, 36 * sizeof(unsigned int));
         Shader CubeShader("res/shaders/phong.shader");
 
         VertexArray vaLightCube;
-        VertexBuffer vbLight(cubeVertices, 3 * 24 * sizeof(float));
+        VertexBuffer vbLight(vertices, 6 * 36 * sizeof(float));
         VertexBufferLayout layoutLight;
         layoutLight.Push<float>(3);
         layoutLight.Push<float>(3);
@@ -195,13 +196,12 @@ int main(void)
 
         // Given to shader
         glm::vec4 color(1.0f, 0.55f, 0.60f, 1.00f);
-        
-        glm::vec3 lightPos(0.5f, 1.0f, 2.0f);
+       
    
         //////////////////////////////////////////////////////////////////////
 
         vb.Unbind();
-        ib.Unbind();
+        //ib.Unbind();
         vaCube.Unbind();
         CubeShader.Unbind();
 
@@ -219,29 +219,41 @@ int main(void)
         //glCullFace(GL_BACK);
         //glFrontFace(GL_CCW);
         
+        float LastFrameTime = 0.0;
+
+        glm::mat4 model(1.0f);
         
 
-        GLenum mode = GL_FILL;
-        float LastFrameTime = 0.0;
-        glm::mat4 model(1.0f);
         camera.Position = glm::vec3(0.0f, 0.0f, 20.0f);
+        static float s_RotationSpeed = 0.01f;
+        static unsigned int polyMode = GL_FILL;
+        static unsigned int mouseMode = GLFW_CURSOR_DISABLED;
+
+        static float lightX = 0.5f;
+        static float lightY = 0.0f;
+        static float lightZ = 1.5f;
 
         while (!glfwWindowShouldClose(window))
         {
-            
+               
             float time = (float)glfwGetTime();
             Timestep timestep = time - LastFrameTime;
             LastFrameTime = time;
 
             renderer.Clear();
-            
             cameraController.ProcessKeyboardInput(window, timestep.GetSeconds());
+
+            // set light position
+            
+            lightX = 2.0f * sin(glfwGetTime());
+           
+            lightZ = 1.5f * cos(glfwGetTime());
+            glm::vec3 lightPos = glm::vec3(lightX, lightY, lightZ);
 
             glm::mat4 view = camera.getViewMatrix();
             glm::mat4 projection = glm::perspective(glm::radians(camera.Fov), camera.AspectRatio, 0.1f, 1000.0f);
             
-            model = glm::rotate(model, timestep.GetSeconds(), glm::vec3(0.0f, 1.0f, 0.0f));
-            
+            model = glm::rotate(model, s_RotationSpeed, glm::vec3(0.0f, 1.0f, 0.0f));
             
             CubeShader.Bind();
             CubeShader.SetUniformMat4("model", model);
@@ -249,26 +261,24 @@ int main(void)
             CubeShader.SetUniformMat4("view", view);
             CubeShader.SetUniform3f("objectColor", color[0], color[1], color[2]);
             CubeShader.SetUniform3f("lightColor", 1.0f, 1.0f, 1.0f);
-            CubeShader.SetUniform3f("lightPos", lightPos[0], lightPos[1], lightPos[2]);
-            CubeShader.SetUniform3f("viewPos", camera.Position[0], camera.Position[1], camera.Position[2]);
+            CubeShader.SetUniform3f("lightPos",lightPos);
+            CubeShader.SetUniform3f("viewPos", camera.Position);
 
-            //renderer.DrawElements(vaCube, ib, CubeShader);
+             //renderer.DrawElements(vaCube, ib, CubeShader);
             renderer.DrawArrays(vaCube, CubeShader);
 
-           LightShader.Bind();
-           LightShader.SetUniformMat4("projection", projection);
-           LightShader.SetUniformMat4("view", view);
-           
-           glm::mat4 lightmodel = glm::mat4(1.0f);
-           lightmodel = glm::translate(lightmodel, lightPos);
-           lightmodel = glm::scale(lightmodel, glm::vec3(0.2f));
-           LightShader.SetUniformMat4("model", lightmodel);
-           
-           renderer.DrawElements(vaLightCube, ib, LightShader);
+            LightShader.Bind();
+            LightShader.SetUniformMat4("projection", projection);
+            LightShader.SetUniformMat4("view", view);
 
-            //std::cout << "Position: " << camera.Position[0] << camera.Position[1] << camera.Position[2] << std::endl;
-            //std::cout << "Front: " << camera.Front[0] << camera.Front[1] << camera.Front[2] << std::endl;
-            //std::cout << "Up: " << camera.Up[0] << camera.Up[1] << camera.Up[2] << std::endl;   
+            glm::mat4 lightmodel(1.0f);
+
+            lightmodel = glm::translate(lightmodel, lightPos);
+            lightmodel = glm::scale(lightmodel, glm::vec3(0.2f));
+            LightShader.SetUniformMat4("model", lightmodel);
+            
+            renderer.DrawArrays(vaLightCube, LightShader);
+
 
             ImGui_ImplOpenGL3_NewFrame();
             ImGui_ImplGlfw_NewFrame();
@@ -278,15 +288,19 @@ int main(void)
                 ImGui::Begin("Test");
                 ImGui::Text(" ");
                 ImGui::ColorEdit3("obj color", (float*)&color);
-                //ImGui::SliderFloat("Rotation Speed", &s_RotationSpeed, 0.0f, 0.15f);
+                ImGui::SliderFloat("Rotation Speed", &s_RotationSpeed, 0.0f, 0.15f);
+
+                ImGui::SliderFloat("Light X Position", &lightX, -10.0f, 10.0f);
+                ImGui::SliderFloat("Light Y Position", &lightY, -10.0f, 10.0f);
+                ImGui::SliderFloat("Light Z Position", &lightZ, -10.0f, 10.0f);
+
                 if (ImGui::Button("Change Rotation Axis")) {
 
                 }
                 if (ImGui::Button("Toggle WireFrame")) {
-
-                    mode = (mode == GL_FILL) ? GL_LINE : GL_FILL;
-                    glPolygonMode(GL_FRONT_AND_BACK, mode);
-
+                    
+                    polyMode = (polyMode == GL_FILL) ? GL_LINE : GL_FILL;
+                    glPolygonMode(GL_FRONT_AND_BACK, polyMode);
                 }
 
                 ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
@@ -294,8 +308,10 @@ int main(void)
                 ImGui::End();
             }
 
-            if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS)
-                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
+                mouseMode = (mouseMode == GLFW_CURSOR_NORMAL) ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL;
+                glfwSetInputMode(window, GLFW_CURSOR, mouseMode);
+            }
 
 
             ImGui::Render();
