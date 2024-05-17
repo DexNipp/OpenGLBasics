@@ -15,22 +15,22 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Application.cpp">
+    <ClCompile Include="src\Core\Application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Core\Renderer.cpp">
+    <ClCompile Include="src\OpenGL\Renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Core\VertexBuffer.cpp">
+    <ClCompile Include="src\OpenGL\VertexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Core\IndexBuffer.cpp">
+    <ClCompile Include="src\OpenGL\IndexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Core\VertexArray.cpp">
+    <ClCompile Include="src\OpenGL\VertexArray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Core\Shader.cpp">
+    <ClCompile Include="src\OpenGL\Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="vendor\imgui\imgui.cpp">
@@ -64,22 +64,22 @@
     <None Include="res\shaders\light.shader" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Core\Renderer.h">
+    <ClInclude Include="src\OpenGL\Renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Core\VertexBuffer.h">
+    <ClInclude Include="src\OpenGL\VertexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Core\IndexBuffer.h">
+    <ClInclude Include="src\OpenGL\IndexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Core\VertexArray.h">
+    <ClInclude Include="src\OpenGL\VertexArray.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Core\VertexBufferLayout.h">
+    <ClInclude Include="src\OpenGL\VertexBufferLayout.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Core\Shader.h">
+    <ClInclude Include="src\OpenGL\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="vendor\imgui\imconfig.h">
@@ -118,7 +118,7 @@
     <ClInclude Include="vendor\GLFW\include\GLFW\glfw3native.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Camera.h">
+    <ClInclude Include="src\Core\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Cube.h">
@@ -127,7 +127,7 @@
     <ClInclude Include="src\Core\Timestep.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\CameraController.h">
+    <ClInclude Include="src\Core\CameraController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
