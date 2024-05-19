@@ -49,7 +49,7 @@ public:
         return glm::perspective(glm::radians(Fov), AspectRatio, zNear, zFar);
     }
 
-    glm::mat4 getViewMatrix() const {
+    inline glm::mat4 getViewMatrix() const {
         return glm::lookAt(Position, Position + Front, Up);
     }
 

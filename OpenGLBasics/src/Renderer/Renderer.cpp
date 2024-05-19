@@ -33,5 +33,5 @@ void Renderer::DrawElements(const VertexArray& va, const IndexBuffer& ib, const 
 void Renderer::DrawArrays(const VertexArray& va, const Shader& shader) {
     shader.Bind();
     va.Bind();
-    GLCALL(glDrawArrays(GL_TRIANGLES, 0, 36)); // Test ***
+    GLCALL(glDrawArrays(GL_TRIANGLES, 0, 36)); // Testing for cube***
 }

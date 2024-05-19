@@ -1,5 +1,6 @@
 #include "Shader.h"
 #include "Renderer.h"
+#include "Core/Log.h"
 
 #include <iostream>
 #include <fstream>
@@ -100,8 +101,8 @@ unsigned int Shader::GetUniformLocation(const std::string& name) {
 
     
     if (location == -1)
-        std::cout << "Warning: uniform " << name << " does not exist." << std::endl;
-       
+        GLB_WARN("Uniform {0} does not exist.", name);
+    
     m_UniformLocationCache[name] = location;
 
     return location;
@@ -117,6 +118,10 @@ void Shader::Unbind() const {
     GLCALL(glUseProgram(0));
 }
 
+
+void Shader::SetUniform1f(const std::string& name, float f) {
+    GLCALL(glUniform1f(GetUniformLocation(name), f));
+}
 
 void Shader::SetUniform3f(const std::string& name, float v0, float v1, float v2) {
     GLCALL(glUniform3f(GetUniformLocation(name), v0, v1, v2));

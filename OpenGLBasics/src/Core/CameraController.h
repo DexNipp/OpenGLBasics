@@ -28,6 +28,8 @@ public:
             m_Camera.Position += m_Camera.Right * velocity;
         if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
             m_Camera.Position += m_Camera.Up * velocity;
+        if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+            m_Camera.Position -= m_Camera.Up * velocity;
     }
 
     void ProcessMouseMovement(double win_xpos, double win_ypos) {

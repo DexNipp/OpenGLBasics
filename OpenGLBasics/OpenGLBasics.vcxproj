@@ -55,17 +55,17 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLEW_STATIC</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GLEW_STATIC; ASSERTIONS_ENABLED</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)OpenGLBasics\vendor\imgui\;$(SolutionDir)OpenGLBasics\vendor\GLFW\include\;$(SolutionDir)OpenGLBasics\vendor\GLEW\include;$(SolutionDir)OpenGLBasics\vendor\GLFW\include\;$(SolutionDir)OpenGLBasics\vendor\glm\;  $(SolutionDir)OpenGLBasics/src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)OpenGLBasics\vendor\spdlog\include;$(SolutionDir)OpenGLBasics\vendor\Assimp\include;$(SolutionDir)OpenGLBasics\vendor\imgui\;$(SolutionDir)OpenGLBasics\vendor\GLFW\include\;$(SolutionDir)OpenGLBasics\vendor\GLEW\include;$(SolutionDir)OpenGLBasics\vendor\glm\;$(SolutionDir)OpenGLBasics/src</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)OpenGLBasics\vendor\GLFW\lib-vc2022;$(SolutionDir)OpenGLBasics\vendor\GLEW\lib\Release\x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glew32s.lib;glfw3.lib;opengl32.lib;user32.lib;Gdi32.lib;Shell32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)OpenGLBasics\vendor\Assimp\lib\x64;$(SolutionDir)OpenGLBasics\vendor\GLFW\lib-vc2022;$(SolutionDir)OpenGLBasics\vendor\GLEW\lib\Release\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glew32s.lib;glfw3.lib;opengl32.lib;user32.lib;Gdi32.lib;Shell32.lib;assimp-vc143-mt.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -90,12 +90,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\OpenGL\Shader.cpp" />
-    <ClCompile Include="src\OpenGL\IndexBuffer.cpp" />
-    <ClCompile Include="src\OpenGL\Renderer.cpp" />
+    <ClCompile Include="src\Core\OpenGLContext.cpp" />
+    <ClCompile Include="src\Core\Log.cpp" />
+    <ClCompile Include="src\Core\Window.cpp" />
+    <ClCompile Include="src\Renderer\Shader.cpp" />
+    <ClCompile Include="src\Renderer\IndexBuffer.cpp" />
+    <ClCompile Include="src\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Core\Application.cpp" />
-    <ClCompile Include="src\OpenGL\VertexBuffer.cpp" />
-    <ClCompile Include="src\OpenGL\VertexArray.cpp" />
+    <ClCompile Include="src\Renderer\VertexBuffer.cpp" />
+    <ClCompile Include="src\Renderer\VertexArray.cpp" />
     <ClCompile Include="vendor\imgui\imgui.cpp" />
     <ClCompile Include="vendor\imgui\imgui_demo.cpp" />
     <ClCompile Include="vendor\imgui\imgui_draw.cpp" />
@@ -111,16 +114,20 @@
     <None Include="res\shaders\light.shader" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Core\OpenGLContext.h" />
+    <ClInclude Include="src\Core\Log.h" />
+    <ClInclude Include="src\Core\Base.h" />
     <ClInclude Include="src\Core\Camera.h" />
     <ClInclude Include="src\Core\CameraController.h" />
-    <ClInclude Include="src\OpenGL\Shader.h" />
+    <ClInclude Include="src\Renderer\Shader.h" />
     <ClInclude Include="src\Core\Timestep.h" />
-    <ClInclude Include="src\OpenGL\VertexBufferLayout.h" />
-    <ClInclude Include="src\OpenGL\IndexBuffer.h" />
-    <ClInclude Include="src\OpenGL\Renderer.h" />
-    <ClInclude Include="src\OpenGL\VertexBuffer.h" />
-    <ClInclude Include="src\OpenGL\VertexArray.h" />
-    <ClInclude Include="src\Cube.h" />
+    <ClInclude Include="src\Renderer\Shapes.h" />
+    <ClInclude Include="src\Renderer\VertexBufferLayout.h" />
+    <ClInclude Include="src\Renderer\IndexBuffer.h" />
+    <ClInclude Include="src\Renderer\Renderer.h" />
+    <ClInclude Include="src\Renderer\VertexBuffer.h" />
+    <ClInclude Include="src\Renderer\VertexArray.h" />
+    <ClInclude Include="src\Core\Window.h" />
     <ClInclude Include="vendor\GLFW\include\GLFW\glfw3.h" />
     <ClInclude Include="vendor\GLFW\include\GLFW\glfw3native.h" />
     <ClInclude Include="vendor\imgui\imconfig.h" />
