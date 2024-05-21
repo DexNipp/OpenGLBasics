@@ -20,9 +20,9 @@ namespace glb {
 
 	Application::Application() {
 
-		GLB_ASSERT(!s_Instance, "Application already exists.");
-		s_Instance = this;
-		m_Window = std::unique_ptr<Window>(Window::Create());
+        GLB_ASSERT(!s_Instance, "Application already exists.");
+        s_Instance = this;
+        m_Window = std::unique_ptr<Window>(Window::Create());
         m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 
 
@@ -163,6 +163,7 @@ namespace glb {
     }
 
     bool Application::OnKeyboardInput(KeyPressedEvent& e) {
+        //Implement global input class
         m_CameraController->ProcessKeyboardInput(e.GetKeyCode(), m_Timestep.GetSeconds());
         return true;
     }
