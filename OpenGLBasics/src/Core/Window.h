@@ -1,9 +1,9 @@
 #pragma once
 
 #include "OpenGLContext.h"
-
-#include "GLFW/glfw3.h"
+#include "Events/Event.h"
 #include <string>
+#include <memory>
 
 namespace glb {
 
@@ -22,6 +22,8 @@ namespace glb {
 
 	class Window {
 	public:
+		using EventCallbackFn = std::function<void(Event&)>;
+
 		Window(const WindowProps& props);
 		~Window();
 
@@ -30,10 +32,13 @@ namespace glb {
 		unsigned int GetWidth() const { return m_Data.Width; }
 		unsigned int GetHeight() const { return m_Data.Height; }
 
+		void SetEventCallback(const EventCallbackFn& callback) { m_Data.EventCallback = callback; }
 		void SetVSync(bool enabled);
 		bool IsVSync() const;
 
-		static Window* Create(const WindowProps& props = WindowProps());
+		static std::unique_ptr<Window> Create(const WindowProps& props = WindowProps());
+
+		GLFWwindow* GetNativeWindow() { return m_Window; }
 
 	private:
 		void Init(const WindowProps& props);
@@ -48,6 +53,8 @@ namespace glb {
 			std::string Title;
 			unsigned int Width, Height;
 			bool VSync;
+
+			EventCallbackFn EventCallback;
 		};
 
 		WindowData m_Data;

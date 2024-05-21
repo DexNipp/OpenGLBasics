@@ -1,11 +1,11 @@
 #include "OpenGLContext.h"
 #include "Log.h"
-#include "Base.h"
+#include "Asserts.h"
 
+#include "GL/glew.h"
 #include "GLFW/glfw3.h"
-//#include "GL/glew.h"
 
-
+#include <iostream>
 
 namespace glb {
 
@@ -19,12 +19,13 @@ namespace glb {
 
 		glfwMakeContextCurrent(m_ContextWindow);
 
-		//int status = glewInit();
-		//GLB_ASSERT(status, "Failed to initiate glew");
-		//GLB_INFO("OpenGL Info:");
-		//GLB_INFO("  Vendor: {0}", glGetString(GL_VENDOR));
-		//GLB_INFO("  Renderer: {0}", glGetString(GL_RENDERER));
-		//GLB_INFO("  Version: {0}", glGetString(GL_VERSION));
+		
+		GLB_ASSERT(glewInit() == GLEW_OK, "Failed to initiate glew");
+		
+		GLB_INFO("OpenGL Info:");
+		GLB_INFO("  Vendor: {0}", (char *)glGetString(GL_VENDOR));
+		GLB_INFO("  Renderer: {0}", (char *)glGetString(GL_RENDERER));
+		GLB_INFO("  Version: {0}", (char *)glGetString(GL_VERSION));
 
 	}
 	void OpenGLContext::SwapBuffers() {

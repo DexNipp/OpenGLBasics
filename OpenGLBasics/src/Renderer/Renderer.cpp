@@ -1,5 +1,7 @@
-#include <iostream>
 #include "Renderer.h"
+
+#include "Core/Log.h"
+#include <iostream>
 
 
 void GLClearError() {
@@ -11,10 +13,12 @@ bool GLLogCall(const char* function, const char* file, int line) {
 
     while (GLenum error = glGetError()) {
         std::cout << "OpenGL ERROR: (" << error << "): " << function << " " << file << " LINE: " << line << std::endl;
+
         return false;
     }
     return true;
 }
+
 
 void Renderer::Clear() const {
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);

@@ -60,12 +60,13 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)OpenGLBasics\vendor\spdlog\include;$(SolutionDir)OpenGLBasics\vendor\Assimp\include;$(SolutionDir)OpenGLBasics\vendor\imgui\;$(SolutionDir)OpenGLBasics\vendor\GLFW\include\;$(SolutionDir)OpenGLBasics\vendor\GLEW\include;$(SolutionDir)OpenGLBasics\vendor\glm\;$(SolutionDir)OpenGLBasics/src</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)OpenGLBasics\vendor\Assimp\lib\x64;$(SolutionDir)OpenGLBasics\vendor\GLFW\lib-vc2022;$(SolutionDir)OpenGLBasics\vendor\GLEW\lib\Release\x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glew32s.lib;glfw3.lib;opengl32.lib;user32.lib;Gdi32.lib;Shell32.lib;assimp-vc143-mt.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)OpenGLBasics\vendor\GLFW\lib-vc2022;$(SolutionDir)OpenGLBasics\vendor\GLEW\lib\Release\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glew32s.lib;glfw3.lib;opengl32.lib;user32.lib;Gdi32.lib;Shell32.lib;</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -90,8 +91,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Core\EntryPoint.h" />
     <ClCompile Include="src\Core\OpenGLContext.cpp" />
     <ClCompile Include="src\Core\Log.cpp" />
+    <ClCompile Include="src\Core\Utility.cpp" />
     <ClCompile Include="src\Core\Window.cpp" />
     <ClCompile Include="src\Renderer\Shader.cpp" />
     <ClCompile Include="src\Renderer\IndexBuffer.cpp" />
@@ -114,11 +117,19 @@
     <None Include="res\shaders\light.shader" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Core\Application.h" />
+    <ClInclude Include="src\Core\KeyCodes.h" />
+    <ClInclude Include="src\Core\MouseCodes.h" />
+    <ClInclude Include="src\Events\Event.h" />
+    <ClInclude Include="src\Events\InputEvents.h" />
+    <ClInclude Include="src\Events\WindowEvents.h" />
     <ClInclude Include="src\Core\OpenGLContext.h" />
     <ClInclude Include="src\Core\Log.h" />
-    <ClInclude Include="src\Core\Base.h" />
-    <ClInclude Include="src\Core\Camera.h" />
-    <ClInclude Include="src\Core\CameraController.h" />
+    <ClInclude Include="src\Core\Asserts.h" />
+    <ClInclude Include="src\Renderer\Camera.h" />
+    <ClInclude Include="src\Renderer\CameraController.h" />
+    <ClInclude Include="src\Core\Utility.h" />
+    <ClInclude Include="src\Core\glb.h" />
     <ClInclude Include="src\Renderer\Shader.h" />
     <ClInclude Include="src\Core\Timestep.h" />
     <ClInclude Include="src\Renderer\Shapes.h" />
@@ -142,6 +153,7 @@
     <ClInclude Include="vendor\imgui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="OGapp.txt" />
     <Text Include="OG.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
