@@ -12,28 +12,28 @@
 
 namespace glb {
 
-	Application* Application::s_Instance = nullptr;
+    Application* Application::s_Instance = nullptr;
 
     Application* Application::CreateApplication() {
         return new Application();
     }
 
-	Application::Application() {
+    Application::Application() {
 
         GLB_ASSERT(!s_Instance, "Application already exists.");
         s_Instance = this;
         m_Window = std::unique_ptr<Window>(Window::Create());
         m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
-
-
+        
+        
         m_Camera = std::make_unique<Camera>(glm::radians(100.0f), m_Window->GetWidth() / m_Window->GetHeight(), 0.1f, 1000.0f);
         m_CameraController = std::make_unique<CameraController>(*m_Camera);
-
+        
         m_Camera->Position = glm::vec3(0.0f, 0.0f, 10.0f);
         m_Camera->Fov = 80.0f;
-
+        
         glEnable(GL_DEPTH_TEST);
-	}
+    }
 
 	void Application::Run() {
 
@@ -80,7 +80,7 @@ namespace glb {
         shadingMaterial.specular = { 1.0f, 1.0f, 1.0f };
         shadingMaterial.shininess = 32;
 
-		while (m_Running) {
+        while (m_Running) {
 
             float time = Time::GetTime();
             m_Timestep = time - m_LastFrameTime;
@@ -128,8 +128,8 @@ namespace glb {
             m_Renderer->DrawArrays(vaLightCube, LightShader);
 
             m_Window->OnUpdate();
-		}
-	}
+        }
+    }
 
     void Application::OnEvent(Event& e) {
 
