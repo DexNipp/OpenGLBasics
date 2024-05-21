@@ -31,12 +31,10 @@ namespace glb {
 
 		static Application* CreateApplication();
 
-
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnMouseMoved(MouseMovedEvent& e);
 		bool OnMouseScrolled(MouseScrolledEvent& e);
-		bool OnKeyboardInput(KeyPressedEvent& e);
 
 	private:
 		std::unique_ptr<Window> m_Window;
@@ -49,7 +47,6 @@ namespace glb {
 
 		Timestep m_Timestep;
 		float m_LastFrameTime = 0.0f;
-
 
 	private:
 		static Application* s_Instance;

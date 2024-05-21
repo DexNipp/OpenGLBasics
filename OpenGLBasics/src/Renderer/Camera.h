@@ -53,10 +53,6 @@ public:
         return glm::lookAt(Position, Position + Front, Up);
     }
 
-    glm::mat4 getProjectionViewMatrix() const {
-        return getProjectionMatrix() * getViewMatrix();
-    }
-
     void UpdateCameraVectors()
     {
         glm::vec3 front;

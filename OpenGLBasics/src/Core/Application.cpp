@@ -35,11 +35,6 @@ namespace glb {
         glEnable(GL_DEPTH_TEST);
 	}
 
-
-    static glm::vec3 lightPos(0.5);
-    static glm::vec2 lightOrbit(2.0f);
-    static glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
-
 	void Application::Run() {
 
         Shapes::Cube Cube;
@@ -73,6 +68,10 @@ namespace glb {
         glm::mat4 model(1.0f);
         glm::vec4 color(1.0f, 0.55f, 0.60f, 1.00f);
 
+        glm::vec3 lightPos(0.5);
+        glm::vec2 lightOrbit(2.0f);
+        glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
+
         static float s_RotationSpeed = 0.01f;
 
         static Material shadingMaterial;
@@ -88,12 +87,10 @@ namespace glb {
             m_LastFrameTime = time;
 
             m_Renderer->Clear();
-            
 
             // set light position and orbit
             lightPos[0] = lightOrbit[0] * sin(time);
             lightPos[2] = lightOrbit[1] * cos(time);
-
 
             glm::mat4 view = m_Camera->getViewMatrix();
             glm::mat4 projection = glm::perspective(glm::radians(m_Camera->Fov), m_Camera->AspectRatio, 0.1f, 1000.0f);
@@ -130,13 +127,12 @@ namespace glb {
 
             m_Renderer->DrawArrays(vaLightCube, LightShader);
 
-
             m_Window->OnUpdate();
 		}
 	}
 
     void Application::OnEvent(Event& e) {
-        GLB_INFO("Event: {0}", e.ToString());
+
         EventDispatcher dispatcher(e);
         dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
         dispatcher.Dispatch<MouseMovedEvent>(BIND_EVENT_FN(Application::OnMouseMoved));
@@ -159,12 +155,6 @@ namespace glb {
     bool Application::OnMouseScrolled(MouseScrolledEvent& e) {
 
         m_CameraController->ProcessMouseScroll(e.GetOffsetY());
-        return true;
-    }
-
-    bool Application::OnKeyboardInput(KeyPressedEvent& e) {
-        //Implement global input class
-        m_CameraController->ProcessKeyboardInput(e.GetKeyCode(), m_Timestep.GetSeconds());
         return true;
     }
 }
