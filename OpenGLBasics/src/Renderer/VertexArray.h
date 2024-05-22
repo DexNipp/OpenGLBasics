@@ -2,9 +2,10 @@
 
 #include "VertexBuffer.h"
 
-class VertexBufferLayout;
 
 namespace glb {
+
+	class VertexBufferLayout;
 
 	class VertexArray
 	{
@@ -13,6 +14,7 @@ namespace glb {
 		unsigned int m_RendererID;
 
 	public:
+		VertexArray();
 		~VertexArray();
 
 		void AddBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout);

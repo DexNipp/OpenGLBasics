@@ -3,6 +3,7 @@
 #include "Core/Asserts.h"
 #include "Core/Timestep.h"
 #include "Core/Utility.h"
+#include "Core/Input.h"
 
 #include "Renderer/Renderer.h"
 #include "Renderer/VertexBuffer.h"

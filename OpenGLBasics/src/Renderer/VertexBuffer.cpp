@@ -4,8 +4,8 @@
 
 namespace glb {
 
-    VertexBuffer* VertexBuffer::Create() {
-        return new VertexBuffer;
+    VertexBuffer* VertexBuffer::Create(const void* data, unsigned int size) {
+        return new VertexBuffer(data, size);
     }
 
     VertexBuffer::VertexBuffer(const void* data, unsigned int size) {

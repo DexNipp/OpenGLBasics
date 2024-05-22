@@ -14,6 +14,6 @@ namespace glb {
 		void Bind() const;
 		void Unbind() const;
 
-		static VertexBuffer* Create();
+		static VertexBuffer* Create(const void* data, unsigned int size);
 	};
 }

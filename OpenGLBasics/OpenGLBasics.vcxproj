@@ -91,6 +91,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Core\ImGuiHelper.cpp" />
+    <ClCompile Include="src\Core\Input.cpp" />
     <ClCompile Include="src\Core\EntryPoint.h" />
     <ClCompile Include="src\Core\OpenGLContext.cpp" />
     <ClCompile Include="src\Core\Log.cpp" />
@@ -117,6 +119,8 @@
     <None Include="res\shaders\light.shader" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Core\ImGuiHelper.h" />
+    <ClInclude Include="src\Core\Input.h" />
     <ClInclude Include="src\Core\Application.h" />
     <ClInclude Include="src\Core\KeyCodes.h" />
     <ClInclude Include="src\Core\MouseCodes.h" />

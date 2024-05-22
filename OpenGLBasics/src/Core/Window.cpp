@@ -50,9 +50,6 @@ namespace glb {
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 
-
-		// TODO: Set glfwCallbacks here after creating event system
-
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height) {
 
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
