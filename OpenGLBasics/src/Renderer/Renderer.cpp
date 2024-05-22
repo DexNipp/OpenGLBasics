@@ -19,23 +19,33 @@ bool GLLogCall(const char* function, const char* file, int line) {
     return true;
 }
 
+namespace glb {
 
-void Renderer::Clear() const {
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
+    void Renderer::Clear() const {
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
 
-void Renderer::DrawElements(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const {
+    void Renderer::DrawElements(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const {
 
-    shader.Bind();
-    va.Bind();
-    ib.Bind();
+        shader.Bind();
+        va.Bind();
+        ib.Bind();
 
-    GLCALL(glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr));
-}
+        GLCALL(glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr));
+    }
 
-void Renderer::DrawArrays(const VertexArray& va, const Shader& shader) {
-    shader.Bind();
-    va.Bind();
-    GLCALL(glDrawArrays(GL_TRIANGLES, 0, 36)); // Testing for cube***
+    void Renderer::DrawArrays(const VertexArray& va, const Shader& shader) {
+        shader.Bind();
+        va.Bind();
+        GLCALL(glDrawArrays(GL_TRIANGLES, 0, 36)); // Testing for cube***
+    }
+
+    void Renderer::EnableDepthTest() {
+        glEnable(GL_DEPTH_TEST);
+    }
+
+    void Renderer::SetPolygonMode(GLenum mode) {
+        glPolygonMode(GL_FRONT_AND_BACK, mode);
+    }
 }

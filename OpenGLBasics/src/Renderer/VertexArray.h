@@ -4,19 +4,23 @@
 
 class VertexBufferLayout;
 
-class VertexArray
-{
-private:
+namespace glb {
 
-	unsigned int m_RendererID;
+	class VertexArray
+	{
+	private:
 
-public:
-	VertexArray();
-	~VertexArray();
+		unsigned int m_RendererID;
 
-	void AddBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout);
+	public:
+		~VertexArray();
 
-	void Bind() const;
-	void Unbind() const;
-};
+		void AddBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout);
 
+		void Bind() const;
+		void Unbind() const;
+
+		static VertexArray* Create();
+	};
+
+}

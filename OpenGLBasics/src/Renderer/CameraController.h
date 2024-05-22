@@ -1,10 +1,11 @@
 #pragma once
 #include "Camera.h"
+
+#include "Core/Input.h"
 #include <Core/KeyCodes.h>
 #include <Core/MouseCodes.h>
 
 namespace glb {
-
 
     class CameraController {
     public:
@@ -16,21 +17,21 @@ namespace glb {
             m_FirstMouse = true;
         }
 
-        void ProcessKeyboardInput(KeyCode keyCode, float deltaTime) {
+        void ProcessKeyboardInput(float deltaTime) {
 
-            float velocity = (keyCode == Key::LeftShift) ? m_MovementSpeed * deltaTime : (m_MovementSpeed * 0.5f)* deltaTime;
+            float velocity = (Input::IsKeyPressed(Key::LeftShift)) ? m_MovementSpeed * deltaTime : (m_MovementSpeed * 0.5f)* deltaTime;
             
-            if (keyCode == Key::W)
+            if (Input::IsKeyPressed(Key::W))
                 m_Camera.Position += m_Camera.Front * velocity;
-            if (keyCode == Key::S)
+            if (Input::IsKeyPressed(Key::S))
                 m_Camera.Position -= m_Camera.Front * velocity;
-            if (keyCode == Key::A)
+            if (Input::IsKeyPressed(Key::A))
                 m_Camera.Position -= m_Camera.Right * velocity;
-            if (keyCode == Key::D)
+            if (Input::IsKeyPressed(Key::D))
                 m_Camera.Position += m_Camera.Right * velocity;
-            if (keyCode == Key::Space)
+            if (Input::IsKeyPressed(Key::Space))
                 m_Camera.Position += m_Camera.Up * velocity;
-            if (keyCode == Key::LeftAlt)
+            if (Input::IsKeyPressed(Key::LeftAlt))
                 m_Camera.Position -= m_Camera.Up * velocity;
         }
 

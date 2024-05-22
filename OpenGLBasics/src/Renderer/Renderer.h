@@ -13,13 +13,16 @@
 void GLClearError();
 bool GLLogCall(const char* function, const char* file, int line);
 
-class Renderer {
-public:
+namespace glb {
 
-    void Clear() const;
-    void DrawElements(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const;
-    void DrawArrays(const VertexArray& va, const Shader& shader);
-    
-    void EnableDepthTest();
-};
+    class Renderer {
+    public:
 
+        void Clear() const;
+        void DrawElements(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const;
+        void DrawArrays(const VertexArray& va, const Shader& shader);
+
+        void EnableDepthTest();
+        void SetPolygonMode(GLenum mode);
+    };
+}
