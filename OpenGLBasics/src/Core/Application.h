@@ -3,13 +3,6 @@
 #include "Window.h"
 #include "ImGuiHelper.h"
 
-#include "Events/Event.h"
-#include "Events/WindowEvents.h"
-#include "Events/InputEvents.h"
-
-#include "Renderer/CameraController.h"
-#include "Renderer/Camera.h"
-
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
@@ -47,7 +40,7 @@ namespace glb {
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnMouseMoved(MouseMovedEvent& e);
 		bool OnMouseScrolled(MouseScrolledEvent& e);
-		
+		bool OnKeyPressed(KeyPressedEvent& e);
 
 	private:
 		Ref<Window> m_Window;
@@ -58,6 +51,7 @@ namespace glb {
 
 	private:
 		bool m_Running = true;
+		bool m_IsCursorEnabled = true;
 		Timestep m_Timestep;
 		float m_LastFrameTime = 0.0f;
 

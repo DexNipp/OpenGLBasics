@@ -159,6 +159,13 @@ namespace glb {
 		m_Data.VSync = enabled;
 	}
 
+	void Window::ToggleCursorMode() {
+
+		unsigned int mouseMode = glfwGetInputMode(m_Window, GLFW_CURSOR);
+		mouseMode = (mouseMode == GLFW_CURSOR_NORMAL) ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL;
+		glfwSetInputMode(m_Window, GLFW_CURSOR, mouseMode);
+	}
+
 	bool Window::IsVSync() const {
 		return m_Data.VSync;
 	}

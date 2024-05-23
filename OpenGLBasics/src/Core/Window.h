@@ -34,6 +34,7 @@ namespace glb {
 
 		void SetEventCallback(const EventCallbackFn& callback) { m_Data.EventCallback = callback; }
 		void SetVSync(bool enabled);
+		void ToggleCursorMode();
 		bool IsVSync() const;
 
 		static std::unique_ptr<Window> Create(const WindowProps& props = WindowProps());

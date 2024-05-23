@@ -1,14 +1,9 @@
 #include "Application.h"
 #include "glb.h"
 
-//#include "imgui.h"
-//#include "imgui_impl_glfw.h"
-//#include "imgui_impl_opengl3.h"
-
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
-
 
 namespace glb {
 
@@ -153,7 +148,7 @@ namespace glb {
         dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
         dispatcher.Dispatch<MouseMovedEvent>(BIND_EVENT_FN(Application::OnMouseMoved));
         dispatcher.Dispatch<MouseScrolledEvent>(BIND_EVENT_FN(Application::OnMouseScrolled));
-        //dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(Application::OnKeyboardInput));
+        dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(Application::OnKeyPressed));
     }
 
     bool Application::OnWindowClose(WindowCloseEvent& e) {
@@ -164,13 +159,23 @@ namespace glb {
 
     bool Application::OnMouseMoved(MouseMovedEvent& e) {
 
-        m_CameraController->ProcessMouseMovement(e.GetX(), e.GetY());
+        if (!m_IsCursorEnabled)
+            m_CameraController->ProcessMouseMovement(e.GetX(), e.GetY());
         return true;
     }
 
     bool Application::OnMouseScrolled(MouseScrolledEvent& e) {
 
         m_CameraController->ProcessMouseScroll(e.GetOffsetY());
+        return true;
+    }
+
+    bool Application::OnKeyPressed(KeyPressedEvent& e) {
+
+        if (Input::IsKeyPressed(Key::T)) {
+            m_Window->ToggleCursorMode();
+            m_IsCursorEnabled = (m_IsCursorEnabled == true) ? false : true;
+        }
         return true;
     }
 }
